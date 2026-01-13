@@ -50,10 +50,31 @@ const loginUser = async (req, res) => {
             return res.status(404).json({ message: 'USER NOT FOUND' });
         }
 
+        // compare passwords
+        const isMatch = await user.comparePassword(password);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'INVALID CREDENTIALS' });
+        }
+
+        if(isMatch){
+            req.status(200).json(
+                { message: 'LOGIN SUCCESSFUL',
+                user:{ 
+                    id:user.id, 
+                    username:user.username, 
+                    email:user.email 
+                } 
+            });
+        }
+
         // Login logic to be implemented
     } catch (error) {
-        res.status(500).json({ message: 'SERVER ERROR', error: error.message });
+        res.status(500).json({ message: 'INTERNAL SERVER ERROR', error: error.message });
     }
 }
 
-export { registerUser };
+export { 
+    registerUser ,
+    loginUser
+};
+
